@@ -2,19 +2,20 @@
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
     <home-swiper :banners="banners"/>
-
+    <home-recommend-view :recommends="recommends"/>
   </div>
 </template>
 
 <script>
   import NavBar from '@/components/common/navbar/NavBar'
-  import HomeSwiper from '@/views/home/childComps/HomeSwiper'
+  import HomeSwiper from './childComps/HomeSwiper'
+  import HomeRecommendView from './childComps/HomeRecommendView'
   import {getHomeMultiData} from "@/network/home";
 
 
   export default {
     name: "Home",
-    components: {NavBar,HomeSwiper},
+    components: {NavBar,HomeSwiper,HomeRecommendView},
     data(){
       return {
         banners:[],
@@ -28,7 +29,7 @@
           console.log(res)
           // this.banners = res._data._rows
           this.banners = res.data.banner.list
-          // this.recommends = res.data.recommend.list
+          this.recommends = res.data.recommend.list
         })
 
     }
