@@ -4,8 +4,10 @@
     <home-swiper :banners="banners"/>
     <home-recommend-view :recommends="recommends"/>
     <feature-view />
-    <tab-control :titles="['流行','新款','精选']" class="tab-control"/>
-    <goods-list :goods="goods['pop'].list"/>
+    <tab-control :titles="['流行','新款','精选']"
+                 class="tab-control"
+                 @tabClick="tabClick" />
+    <goods-list :goods="showGoods"/>
     <ul><li>列表1</li><li>列表2</li><li>列表3</li><li>列表4</li><li>列表5</li>
       <li>列表6</li><li>列表7</li><li>列表8</li><li>列表9</li><li>列表10</li>
       <li>列表11</li><li>列表12</li><li>列表13</li><li>列表14</li><li>列表15</li>
@@ -47,7 +49,8 @@
           'pop':{page:0,list:[]},//流行
           'new':{page:0,list:[]}, //新款
           'sell':{page:0,list:[]} //精选
-        }
+        },
+        currentType: 'pop'
       }
     },
     created() {
@@ -58,7 +61,31 @@
       this.getHomeSecondData('new')
       this.getHomeSecondData('sell')
     },
+    computed:{
+      showGoods(){
+        return this.goods[this.currentType].list
+      }
+    },
     methods:{
+      /*
+      * 事件监听相关方法
+      * */
+      tabClick(index){
+          switch (index) {
+            case 0:
+              this.currentType = 'pop'
+              break
+            case 1:
+              this.currentType = 'new'
+              break
+            case 2:
+              this.currentType = 'sell'
+              break
+          }
+      },
+      /*
+      * 网络请求相关的方法
+      * */
       getHomeFirstData(){
         getHomeMultiData()
         .then(res =>{
