@@ -108,6 +108,9 @@
 
 <script>
   import BScroll from '@better-scroll/core'
+  import Pullup from '@better-scroll/pull-up'
+  BScroll.use(Pullup)
+
   export default {
     name: "Category",
     data(){
@@ -117,9 +120,23 @@
     },
     mounted() {
       this.scroll = new BScroll('.wrapper', {
-        movable: true,
-        zoom: true
+        click: true,
+        probeType:3,
+        pullUpLoad: true
       })
+      this.initBscroll()
+    },
+    methods:{
+      initBscroll(){
+        this.scroll.on('scroll',(position)=>{
+          console.log(position)
+        })
+        this.scroll.on('pullingUp',()=>{
+          console.log('加载下一步数据')
+          this.scroll.finishPullUp()
+        })
+
+      }
     }
   }
 </script>
