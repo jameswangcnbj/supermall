@@ -1,7 +1,11 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
+    <scroll class="content" ref="scroll"
+            :probe-type="3"
+            :pull-up-load="true"
+            @scroll="contentScroll"
+            @pullingUp="loadMore">
       <home-swiper :banners="banners"/>
       <home-recommend-view :recommends="recommends"/>
       <feature-view />
@@ -9,7 +13,7 @@
                        class="tab-control"
                        @tabClick="tabClick" />
       <goods-list :goods="showGoods"/>
-<!--      <div style="height: 800px;">&nbsp;</div>-->
+      <div style="height: 170px;">&nbsp;</div>
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBacktop"/>
   </div>
@@ -88,8 +92,11 @@
         this.$refs.scroll.moveTo(0,0)
       },
       contentScroll(position){
-        console.log(position);
+        // console.log(position);
         this.isShowBacktop = -position.y > 200
+      },
+      loadMore(){
+        this.getHomeSecondData(this.currentType)
       },
       /*
       * 网络请求相关的方法
@@ -110,6 +117,7 @@
             console.log("商品数据",res)
             this.goods[type].list.push(...res._data._rows)
             this.goods[type].page += 1
+            this.$refs.scroll.finishPullUp()
           })
       }
     }
