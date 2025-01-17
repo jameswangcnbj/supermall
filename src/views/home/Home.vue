@@ -4,8 +4,8 @@
     <scroll class="content" ref="scroll"
             :probe-type="3"
             :pull-up-load="true"
-            @scroll="contentScroll"
-            @pullingUp="loadMore">
+            @pullingUp="loadMore"
+            @scroll="contentScroll">
       <home-swiper :banners="banners"/>
       <home-recommend-view :recommends="recommends"/>
       <feature-view />
@@ -13,7 +13,7 @@
                        class="tab-control"
                        @tabClick="tabClick" />
       <goods-list :goods="showGoods"/>
-      <div style="height: 170px;">&nbsp;</div>
+<!--      <div style="height: 170px;">&nbsp;</div>-->
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBacktop"/>
   </div>
@@ -31,7 +31,8 @@
   import FeatureView from './childComps/FeatureView'
 
 
-  import {getHomeMultiData,getHomeGoods} from "@/network/home";
+  import { getHomeMultiData,getHomeGoods } from "@/network/home"
+  import { debounce } from "@/common/utils"
 
   export default {
     name: "Home",
@@ -58,6 +59,7 @@
         isShowBacktop: false
       }
     },
+
     created() {
       //1.请求多个数据
       this.getHomeFirstData()
@@ -65,6 +67,13 @@
       this.getHomeSecondData('pop')
       this.getHomeSecondData('new')
       this.getHomeSecondData('sell')
+    },
+    mounted(){
+      //1.监听GoodsListItem的图片加载的事件总线
+      const refresh = debounce(this.$refs.scroll.refresh,500)
+      this.$bus.$on('itemImageLoad',()=>{
+        refresh()
+      })
     },
     computed:{
       showGoods(){
@@ -75,6 +84,7 @@
       /*
       * 事件监听相关方法
       * */
+
       tabClick(index){
           switch (index) {
             case 0:
