@@ -1,6 +1,6 @@
 <template>
     <div class="recommend">
-      <div v-for="item in recommends" class="recommend-item">
+      <div v-for="item in recommends.list" class="recommend-item">
         <a :href="item.link" target="_blank">
           <img :src="item.image" >
           <div>{{ item.title }}</div>
@@ -14,7 +14,7 @@
         name: "HomeRecommendView",
         props:{
           recommends:{
-            type: Array,
+            type: Object,
             default(){
               return []
             }

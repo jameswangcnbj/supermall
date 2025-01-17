@@ -1,19 +1,23 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <tab-control :titles="['流行','新款','精选']" class="tab-control"
+                  @tabClick="tabClick"
+                 ref="tabControlTop"
+                 v-show="isTabFixed" />
     <scroll class="content" ref="scroll"
             :probe-type="3"
             :pull-up-load="true"
             @pullingUp="loadMore"
             @scroll="contentScroll">
-      <home-swiper :banners="banners"/>
-      <home-recommend-view :recommends="recommends"/>
+      <home-swiper :banners="topdata['banner']"  @swiperImageLoad="swiperImageLoad" />
+      <home-recommend-view :recommends="topdata['recommend']"/>
       <feature-view />
       <tab-control :titles="['流行','新款','精选']"
-                       class="tab-control"
-                       @tabClick="tabClick" />
+                   @tabClick="tabClick" ref="tabControl"
+      />
       <goods-list :goods="showGoods"/>
-<!--      <div style="height: 170px;">&nbsp;</div>-->
+      <div style="height: 370px;">&nbsp;</div>
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBacktop"/>
   </div>
@@ -48,21 +52,28 @@
     },
     data(){
       return {
-        banners:[],
-        recommends:[],
+        // banners:[],
+        // recommends:[],
+        topdata:{
+          'banner':{list:[]},
+          'recommend':{list:[]}
+        },
         goods:{
           'pop':{page:0,list:[]},//流行
           'new':{page:0,list:[]}, //新款
           'sell':{page:0,list:[]} //精选
         },
         currentType: 'pop',
-        isShowBacktop: false
+        isShowBacktop: false,
+        tabOffSetTop: 0,
+        isTabFixed: false
       }
     },
 
     created() {
-      //1.请求多个数据
-      this.getHomeFirstData()
+      //1.请求top数据
+      this.getHomeFirstData('banner')
+      this.getHomeFirstData('recommend')
       //2.请求商品数据
       this.getHomeSecondData('pop')
       this.getHomeSecondData('new')
@@ -97,34 +108,42 @@
               this.currentType = 'sell'
               break
           }
+          this.$refs.tabControlTop.currentIndex = index
+          this.$refs.tabControl.currentIndex = index
       },
       backClick(){
         this.$refs.scroll.moveTo(0,0)
       },
       contentScroll(position){
         // console.log(position);
+        //1.决定backtop的按钮是否显示
         this.isShowBacktop = -position.y > 200
+        //2.决定tabcontrol是否吸顶
+        this.isTabFixed = (-position.y) > this.tabOffSetTop
       },
       loadMore(){
         this.getHomeSecondData(this.currentType)
       },
+      swiperImageLoad(){
+        // console.log(this.$refs.tabControl.$el.offsetTop)
+        this.tabOffSetTop = this.$refs.tabControl.$el.offsetTop
+      },
       /*
       * 网络请求相关的方法
       * */
-      getHomeFirstData(){
-        getHomeMultiData()
+      getHomeFirstData(type){
+        getHomeMultiData(type)
         .then(res =>{
-          console.log(res)
-          // this.banners = res._data._rows
-          this.banners = res.data.banner.list
-          this.recommends = res.data.recommend.list
+          console.log("头部数据",res)
+          this.topdata[type].list.push(...res._data._rows)
+          this.$refs.scroll.finishPullUp()
         })
       },
       getHomeSecondData(type){
         const page = this.goods[type].page + 1;
         getHomeGoods(type,page)
           .then(res=>{
-            console.log("商品数据",res)
+            // console.log("商品数据",res)
             this.goods[type].list.push(...res._data._rows)
             this.goods[type].page += 1
             this.$refs.scroll.finishPullUp()
@@ -139,23 +158,20 @@
   #home {
     /*height: 100vh;*/
     position: relative;
-    padding-top: 44px;
+    /*padding-top: 44px;*/
     height: 100vh;
   }
  .home-nav{
    background-color: var(--color-tint);
    color: #fff;
-   position: fixed;
-   left: 0px;
-   right: 0px;
-   top: 0px;
-   z-index: 9;
+   /*position: fixed;*/
+   /*left: 0px;*/
+   /*right: 0px;*/
+   /*top: 0px;*/
+   /*z-index: 9;*/
+
  }
-  .tab-control{
-    position: sticky;
-    top: 44px;
-    z-index: 9;
-  }
+
   /*.content{*/
   /*  height: calc(100% - 193px);*/
   /*  overflow: hidden;*/
@@ -168,5 +184,9 @@
     bottom: 49px;
     left: 0px;
     right: 0px;
+  }
+  .tab-control{
+    position: relative;
+    z-index: 9;
   }
 </style>
