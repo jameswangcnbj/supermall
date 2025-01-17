@@ -66,10 +66,17 @@
         currentType: 'pop',
         isShowBacktop: false,
         tabOffSetTop: 0,
-        isTabFixed: false
+        isTabFixed: false,
+        positionY: 0
       }
     },
-
+     activated(){
+        this.$refs.scroll.moveTo(0,this.positionY,0)
+        this.$refs.scroll.refresh()
+     },
+    deactivated(){
+        this.positionY = this.$refs.scroll.getScrollY()
+    },
     created() {
       //1.请求top数据
       this.getHomeFirstData('banner')
