@@ -122,6 +122,7 @@
             this.themeTopYs.push(300)
             this.themeTopYs.push(700)
             this.themeTopYs.push(this.$refs.recommend.$el.offsetTop)
+            this.themeTopYs.push(Number.MAX_VALUE)
             console.log(this.themeTopYs);
           },500)
 
@@ -138,14 +139,14 @@
         },
         contentScroll(position){
           // console.log(position);
-          const positionY = -position.y
+          const positionY = - position.y
           const length = this.themeTopYs.length
-          for(let i=0;i<length;i++){
-            if(this.currentIndex !== i  && ((i< length - 1 && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1]) ||
-              (i === length - 1 && positionY >= this.themeTopYs[i]))){
-                // console.log("====",i);
-                this.$refs.navbar.currentIndex = i
-            }
+          for(let i=0;i<length - 1;i++){
+            if(this.currentIndex !== i  && positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1]){
+                this.currentIndex = i;
+                console.log("====",i);
+                this.$refs.navbar.currentIndex = this.currentIndex
+              }
 
           }
         }
