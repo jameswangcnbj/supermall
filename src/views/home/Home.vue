@@ -151,6 +151,7 @@
             // console.log("商品数据",res)
             this.goods[type].list.push(...res._data._rows)
             this.goods[type].page += 1
+            this.$refs.scroll.refresh()
             this.$refs.scroll.finishPullUp()
           })
       }
