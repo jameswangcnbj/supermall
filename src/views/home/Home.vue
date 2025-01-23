@@ -17,7 +17,7 @@
                    @tabClick="tabClick" ref="tabControl"
       />
       <goods-list :goods="showGoods"/>
-      <div style="height: 370px;">&nbsp;</div>
+
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBacktop"/>
   </div>
@@ -37,6 +37,7 @@
 
   import { getHomeMultiData,getHomeGoods } from "@/network/home"
   import { debounce } from "@/common/utils"
+  import { itemListenerMixin} from "@/common/mixin";
 
   export default {
     name: "Home",
@@ -50,6 +51,7 @@
       GoodsList,
       BackTop
     },
+    mixins:[itemListenerMixin],
     data(){
       return {
         // banners:[],
@@ -67,7 +69,7 @@
         isShowBacktop: false,
         tabOffSetTop: 0,
         isTabFixed: false,
-        positionY: 0
+        positionY: 0,
       }
     },
      activated(){
@@ -75,6 +77,7 @@
         this.$refs.scroll.refresh()
      },
     deactivated(){
+        //1.保存Y值
         this.positionY = this.$refs.scroll.getScrollY()
     },
     created() {
@@ -87,11 +90,6 @@
       this.getHomeSecondData('sell')
     },
     mounted(){
-      //1.监听GoodsListItem的图片加载的事件总线
-      const refresh = debounce(this.$refs.scroll.refresh,500)
-      this.$bus.$on('itemImageLoad',()=>{
-        refresh()
-      })
     },
     computed:{
       showGoods(){

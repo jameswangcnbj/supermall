@@ -9,7 +9,7 @@ import {request} from './request'
 
 export function getHomeMultiData(type) {
   return request({
-    url: '/admin/report/load_vuetopdata',
+    url: 'http://39.105.195.164/admin/report/load_vuetopdata',
     params:{
       type
     }
@@ -18,7 +18,7 @@ export function getHomeMultiData(type) {
 
 export function getHomeGoods(type,page) {
   return request({
-    url: '/admin/report/load_vuehomedata',
+    url: 'http://39.105.195.164/admin/report/load_vuehomedata',
     params:{
       type,
       page
