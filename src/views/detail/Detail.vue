@@ -60,7 +60,8 @@
        </div>
       <goods-list :goods="recommends" ref="recommend" @itemImageLoad="itemImageLoad"></goods-list>
     </scroll>
-
+    <back-top @click.native="backClick" v-show="isShowBacktop"/>
+     <detail-bottom-bar></detail-bottom-bar>
   </div>
 </template>
 
@@ -68,10 +69,11 @@
     import DetailNavBar from './childComps/DetailNavBar'
     import DetailSwiper from './childComps/DetailSwiper'
     import DetailBaseInfo from './childComps/DetailBaseInfo'
+    import DetailBottomBar from './childComps/DetailBottomBar'
     import {getDetail,Goods, getDtailRecommend} from "@/network/detail";
     import Scroll from '@/components/common/scroll/Scroll'
     import GoodsList from "@/components/content/goods/GoodsList";
-    import {itemListenerMixin} from "@/common/mixin";
+    import {itemListenerMixin,backTopMixin} from "@/common/mixin";
     import {debounce} from "@/common/utils";
 
     export default {
@@ -82,9 +84,10 @@
         DetailNavBar,
         DetailSwiper,
         DetailBaseInfo,
+        DetailBottomBar,
         Scroll
       },
-      mixins:[itemListenerMixin],
+      mixins:[itemListenerMixin,backTopMixin],
       data(){
        return {
          id: null,
@@ -139,6 +142,9 @@
         },
         contentScroll(position){
           // console.log(position);
+           //1.决定backtop的按钮是否显示
+        this.isShowBacktop = -position.y > 500
+
           const positionY = - position.y
           const length = this.themeTopYs.length
           for(let i=0;i<length - 1;i++){

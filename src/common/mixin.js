@@ -1,4 +1,5 @@
 import {debounce} from "@/common/utils";
+import BackTop from '@/components/content/backtop/BackTop'
 
 export const itemListenerMixin = {
   data(){
@@ -18,5 +19,23 @@ export const itemListenerMixin = {
   deactivated(){
     //取消全局事件监听
     this.$bus.$off('itemImageLoad',this.itemImgListener)
+  }
+}
+
+
+
+export const backTopMixin = {
+  components:{
+    BackTop
+  },
+  data(){
+    return {
+      isShowBacktop: false
+    }
+  },
+  methods:{
+     backClick(){
+        this.$refs.scroll.moveTo(0,0)
+      }
   }
 }

@@ -17,7 +17,8 @@
                    @tabClick="tabClick" ref="tabControl"
       />
       <goods-list :goods="showGoods"/>
-
+      <!-- 解决手机端查看下面有地址栏高度的问题 -->
+      <div style="height:170px;"></div>
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBacktop"/>
   </div>
@@ -28,7 +29,7 @@
   import Scroll from '@/components/common/scroll/Scroll'
   import TabControl from '@/components/content/tabcontrol/TabControl'
   import GoodsList from '@/components/content/goods/GoodsList'
-  import BackTop from '@/components/content/backtop/BackTop'
+
 
   import HomeSwiper from './childComps/HomeSwiper'
   import HomeRecommendView from './childComps/HomeRecommendView'
@@ -37,7 +38,7 @@
 
   import { getHomeMultiData,getHomeGoods } from "@/network/home"
   import { debounce } from "@/common/utils"
-  import { itemListenerMixin} from "@/common/mixin";
+  import { itemListenerMixin, backTopMixin} from "@/common/mixin";
 
   export default {
     name: "Home",
@@ -48,10 +49,9 @@
       HomeSwiper,
       HomeRecommendView,
       FeatureView,
-      GoodsList,
-      BackTop
+      GoodsList
     },
-    mixins:[itemListenerMixin],
+    mixins:[itemListenerMixin,backTopMixin],
     data(){
       return {
         // banners:[],
@@ -66,7 +66,7 @@
           'sell':{page:0,list:[]} //精选
         },
         currentType: 'pop',
-        isShowBacktop: false,
+        // isShowBacktop: false,
         tabOffSetTop: 0,
         isTabFixed: false,
         positionY: 0,
@@ -116,13 +116,13 @@
           this.$refs.tabControlTop.currentIndex = index
           this.$refs.tabControl.currentIndex = index
       },
-      backClick(){
-        this.$refs.scroll.moveTo(0,0)
-      },
+      // backClick(){
+      //   this.$refs.scroll.moveTo(0,0)
+      // },
       contentScroll(position){
         // console.log(position);
         //1.决定backtop的按钮是否显示
-        this.isShowBacktop = -position.y > 200
+        this.isShowBacktop = -position.y > 100
         //2.决定tabcontrol是否吸顶
         this.isTabFixed = (-position.y) > this.tabOffSetTop
       },
